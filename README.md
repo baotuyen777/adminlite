@@ -1,0 +1,2 @@
+# adminlite
+adminlite for magento
