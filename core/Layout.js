@@ -5,32 +5,27 @@ const user = JSON.parse(localStorage.getItem("authZ")) || null;
 export default class Layout extends Component {
   constructor(props) {
     super(props);
-    const user = JSON.parse(localStorage.getItem("authZ")) || null;
-    if (user == null) {
-      this.state = { name: '' }
-      setTimeout(() => {
-        browserHistory.push('/login')
-      }, 100)
-    } else {
-      this.state = { name: user.name || '' }
-    }
   }
-  renderHiddenModule() {
-    if (user.role == 2) {
+  renderContent() {
+    const user = JSON.parse(localStorage.getItem("authZ")) || null;
+    if (user === null) {
+      return (<div style={{ marginTop: '1.5em' }}>This function required <Link to='/login'>login</Link></div>);
+    } else {
       return (
-        <ul className="nav navbar-nav navbar-right">
-          <li className=""><Link to="/user">User</Link></li>
-          <li className=""><Link to="/product">Product</Link></li>
-        </ul>
-
+        <div style={{ marginTop: '1.5em' }}>{this.props.children}</div>
       );
     }
   }
-  render() {
-    if (user === null) {
-      return (<div></div>);
-    }
+  renderMenu() {
 
+
+  }
+  render() {
+    let items = [
+      { k: 'order', v: 'Order' },
+      { k: 'user', v: 'User' },
+      { k: 'product', v: 'Product' },
+    ]
     return (
       <div>
         <header>
@@ -48,16 +43,17 @@ export default class Layout extends Component {
               </div>
               <div id="navbar" className="collapse navbar-collapse">
                 <ul className="nav navbar-nav">
-                  <li className="active"><Link to="/">Home</Link></li>
-                  <li className=""><Link to="/order">Order</Link></li>
-                  <li className=""><Link to="/user">User</Link></li>
-                  <li className=""><Link to="/product">Product</Link></li>
-                  
+                  <li><Link to="/">Home</Link></li>
+                  {
+                    items.map((item, index) =>
+                      <li key={index} className={"/" + item.k == this.props.location.pathname ? 'active' : ''}><Link to={"/" + item.k}>{item.v}</Link></li>
+                    )
+                  }
                 </ul>
                 <ul className="nav navbar-nav navbar-right">
-                <li className="dropdown">
+                  <li className="dropdown">
                     <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                      Xin chào: {this.state.name} <span className="caret"></span>
+                      Xin chào: Admin <span className="caret"></span>
                     </a>
                     <ul className="dropdown-menu">
                       <li><a href="/logout">Logout</a></li>
@@ -72,7 +68,7 @@ export default class Layout extends Component {
         <hr />
         <main>
           <div className="container">
-            <div style={{ marginTop: '1.5em' }}>{this.props.children}</div>
+            {this.renderContent()}
           </div>
         </main>
         <footer className="footer">

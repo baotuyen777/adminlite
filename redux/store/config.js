@@ -1,5 +1,5 @@
 import { createStore, applyMiddleware, compose} from 'redux'
-import combineReducer from '../reducers/index'
+import combineReducer from '../reducers'
 import {crashReporter} from '../middlewares/index'
 //import createLogger from 'redux-logger'
 import thunk from 'redux-thunk'

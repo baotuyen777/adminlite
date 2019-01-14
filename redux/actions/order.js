@@ -5,7 +5,6 @@ export const getAllOrder = (param, dispatch, state) => {
     entity + '?searchCriteria[pageSize]=2&searchCriteria[currentPage]='+param.currentPage,
     res => dispatch({ type: 'ORDER_ALL_SUCCESS', data: res }),
     res => dispatch({ type: 'ORDER_ALL_FAIL', data: res }),
-    err => console.log(err)
   )
 }
 export const deleteOrder = (id, dispatch, state) => {

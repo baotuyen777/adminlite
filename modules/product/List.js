@@ -10,7 +10,7 @@ class List extends Component {
         this.state = {
             items: false,
             isLoading: true,
-            isDisabled: '',
+            is_success: true,
             message: '',
             currentPage: page || 1,
             totalPages: 1,
@@ -21,12 +21,12 @@ class List extends Component {
     }
     componentWillReceiveProps(props) {
         // const { listProduct: { type, data: { message, items, total_count, search_criteria: { page_size } } } } = props.product;
-        // console.log(props.product, 55555);
-        const { listProduct: { data, type } } = props.product;
+        const { result: { data, type } } = props.product;
         const { page } = props.params;
+       
         if (type === "PRODUCT_ALL_SUCCESS") {
             const { items, total_count, search_criteria: { page_size } } = data;
-            let totalPages =  Math.ceil(total_count / page_size);
+            let totalPages = Math.ceil(total_count / page_size);
             this.setState({
                 items,
                 total_count,
@@ -34,33 +34,30 @@ class List extends Component {
                 totalPages
             });
         }
-        if (type === "PRODUCT_ALL_FAIL") {
+        if (type === "PRODUCT_ALL_FAIL" || type === "PRODUCT_DELETE_FAIL") {
             const { message } = data;
-            this.setState({ message })
-            // alert('load data fail');
-        }
-        if (type === "PRODUCT_DELETE_SUCCESS") {
-            this.props.onGetAllProduct(this.state.object);
-            // this.setState({
-            //     data: listProduct.data.data,
-            // });
+            this.setState({ message, is_success: false })
         }
         this.setState({ isLoading: false });
+        if (type === "PRODUCT_DELETE_SUCCESS") {
+            this.props.onGetAllProduct({ currentPage: this.state.currentPage });
+            this.setState({ isLoading: true, message: "Delete success" });
+        }
         // switch page
         if (page !== undefined && this.state.currentPage !== page) {
             this.setState({ isLoading: true, currentPage: page });
             this.props.onGetAllProduct({ currentPage: props.params.page });
         }
-        
+
     }
-    onDelete(id) {
-        if (!id) {
-            alert({ notice: 'ID invalid' });
+    onDelete(sku) {
+        if (!sku) {
+            alert({ notice: 'sku invalid' });
             return;
         }
         var r = confirm("Are you sure ?");
         if (r) {
-            this.props.onDelele(id);
+            this.props.onDelele(sku);
             this.setState({ isLoading: true });
         }
     }
@@ -77,7 +74,7 @@ class List extends Component {
                 </div>
             );
         }
-        if (this.props.product.listProduct.type === 'PRODUCT_ALL_FAIL') {
+        if (this.props.product.result.type === 'PRODUCT_ALL_FAIL') {
             return (
                 <div className="alert alert-danger">
                     <strong>Error!</strong> {this.state.message.replace("%resources", 'or token expire')}
@@ -92,8 +89,12 @@ class List extends Component {
                 </li>
             );
         }
+        let mesClass = this.state.is_success ? 'alert-success' : 'alert-danger';
         return (
             <div>
+                <div className={this.state.message ? 'alert ' + mesClass : "hide"}>
+                    <strong>{this.state.is_success ? "Success" : "Error"}!</strong> {this.state.message}
+                </div>
                 <table className="table table-bordered">
                     <thead>
                         <tr>
@@ -110,14 +111,14 @@ class List extends Component {
                     <tbody>
                         {this.state.items.map((item, index) =>
                             <tr key={index}>
-                                <td>{index + 1}</td>
+                                <td>{item.id}</td>
                                 <td><img srcSet={this.getImageLink(item.custom_attributes)} height="50" /></td>
                                 <td> <Link to={"/product/sku/" + item.sku}>{item.name}</Link></td>
                                 <td>{item.sku}</td>
                                 <td>{item.price}</td>
                                 <td>{item.status}</td>
                                 <td>{item.type_id}</td>
-                                <td><button className="btn-danger" onClick={() => this.onDelete(item.id)}><i className="fa fa-trash" aria-hidden="true"></i></button></td>
+                                <td><button className="btn-danger" onClick={() => this.onDelete(item.sku)}><i className="fa fa-trash" aria-hidden="true"></i></button></td>
                             </tr>
                         )
                         }
@@ -131,10 +132,8 @@ class List extends Component {
 
     }
     getImageLink(custom_attributes) {
-        
         let obj = custom_attributes.find(o => o.attribute_code === 'thumbnail');
-        console.log(obj,6666)
-        if(obj===undefined ){
+        if (obj === undefined) {
             return '';
         }
         return "http://192.168.1.87/magento226/pub/media/catalog/product/" + obj.value;

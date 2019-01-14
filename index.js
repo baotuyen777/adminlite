@@ -1,5 +1,5 @@
 import { render } from 'react-dom';
-import Layout from './components/Layout';
+import Layout from './core/Layout';
 import auth from './modules/auth';
 import product from './modules/product';
 import order from './modules/order';

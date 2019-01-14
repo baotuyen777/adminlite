@@ -18,14 +18,14 @@ class Login extends Component {
         }
     }
     componentWillReceiveProps(props) {
-        const {login} = props.auth
-        if (login.type === "LOGIN_SUCCESS") {
+        const { result: { type, data } } = props.auth
+        if (type === "LOGIN_SUCCESS") {
             this.setState({
                 notice: 'login successfully',
                 color: { color: 'green' }
             });
             if (typeof (Storage) !== "undefined") {
-                let dataStorage = { token:login.data}
+                let dataStorage = { token: data }
                 localStorage.setItem("authZ", JSON.stringify(dataStorage));
             } else {
                 console.error("your browser not support localStorage");
@@ -33,7 +33,7 @@ class Login extends Component {
             browserHistory.push('/order');
         }
 
-        if (login.type === "LOGIN_FAIL") {
+        if (type === "LOGIN_FAIL") {
             this.setState({
                 notice: 'User name or password invalid',
                 color: { color: 'red' }
@@ -43,7 +43,7 @@ class Login extends Component {
     }
     onSubmitLogin(e) {
         e.preventDefault();
-        const {username, password} = this.state;
+        const { username, password } = this.state;
         this.setState({ notice: '' });
         if (!username.trim() || !password.trim()) {
             this.setState({ notice: 'username or password not null' })
@@ -63,13 +63,13 @@ class Login extends Component {
                     <label htmlFor="exampleInputusername1">username:</label>
                     <input type="username" className="form-control" id="exampleInputusername1" placeholder="username" value={this.state.username}
                         onChange={(e) => this.setState({ username: e.target.value })}
-                        />
+                    />
                 </div>
                 <div className="form-group">
                     <label htmlFor="exampleInputPassword1">Password</label>
                     <input type="password" className="form-control" id="exampleInputPassword1" placeholder="Password" value={this.state.password}
                         onChange={(e) => this.setState({ password: e.target.value })}
-                        />
+                    />
                 </div>
                 <div className="form-group">
                     <button type="" className="btn btn-primary" disabled={this.state.isDisabled}>

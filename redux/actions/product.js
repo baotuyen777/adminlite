@@ -8,16 +8,15 @@ export const getAllProduct = (param, dispatch, state) => {
     err => console.log(err));
 }
 export const getProduct = (param, dispatch, state) => {
-  console.log(param,666)
   Services.get(
     entity +param.sku,
     res => dispatch({ type: 'PRODUCT_ONE_SUCCESS', data: res }),
     res => dispatch({ type: 'PRODUCT_ONE_FAIL', data: res }),
     err => console.log(err));
 }
-export const deleteProduct = (id, dispatch, state) => {
+export const deleteProduct = (sku, dispatch, state) => {
   Services.delete(
-    entity + id,
+    entity + sku,
     res => dispatch({ type: 'PRODUCT_DELETE_SUCCESS', data: res }),
     res => dispatch({ type: 'PRODUCT_DELETE_FAIL', data: res }),
     err => console.log(err));

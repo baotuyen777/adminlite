@@ -3,9 +3,6 @@ import { browserHistory, Link } from 'react-router';
 import { connect } from 'react-redux'
 import { getAllOrder, deleteOrder, changeStatusOrder, addOrder, updateOrder } from '../../redux/actions/order'
 import { getAllProduct } from '../../redux/actions/product';
-import { getAllDate, changeStatusDate } from '../../redux/actions/date';
-
-const user = JSON.parse(localStorage.getItem("authZ")) || null;
 class List extends Component {
     constructor(props) {
         super(props);
@@ -14,7 +11,6 @@ class List extends Component {
         let dd = today.getDate();
         let mm = today.getMonth() + 1; //January is 0!
         let yyyy = today.getFullYear();
-
         this.state = {
             items: null,
             total_count: null,
@@ -35,9 +31,9 @@ class List extends Component {
     }
     componentWillReceiveProps(props) {
         this.props = props;
-        const { listOrder: { data, type } } = props.order;
+        console.log(props, 8888)
+        const { result: { data, type } } = props.order;
         const { page } = props.params;
-        console.log(type);
         if (type === "ORDER_ALL_SUCCESS") {
             const { items, total_count, search_criteria: { page_size } } = data;
             let totalPages = Math.ceil(total_count / page_size);
@@ -102,7 +98,7 @@ class List extends Component {
                 </div>
             );
         }
-        if (this.props.order.listOrder.type === 'ORDER_ALL_FAIL') {
+        if (this.props.order.result.type === 'ORDER_ALL_FAIL') {
             return (
                 <div className="alert alert-danger">
                     <strong>Error!</strong> {this.state.message.replace("%resources", 'or token expire')}
@@ -174,8 +170,6 @@ class List extends Component {
                                     <div>
                                         <button onClick={() => this.onDelete(item.orderId)}
                                             className="btn btn-danger"><i className="fa fa-trash" aria-hidden="true"></i></button> &nbsp;
-                                        <button onClick={() => this.onUpdate(item.orderId)}
-                                            className="btn btn-warning"><i className="fa fa-pencil" aria-hidden="true"></i></button>
                                     </div>
                                 </td>
                             </tr>
@@ -216,12 +210,6 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(
-    (state, ownProps) => ({
-        auth: state.auth,
-        order: state.order,
-        product: state.product,
-        date: state.date,
-    })
-    ,
+    (state, ownProps) => (state),
     mapDispatchToProps
 )(List)

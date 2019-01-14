@@ -9,7 +9,6 @@ export default class Logout extends Component {
     componentWillMount() {
         localStorage.removeItem('authZ');
         setTimeout(() => browserHistory.push('/login'), 100);
-        ;
     }
     render() {
         return (<div></div>);
